@@ -8,31 +8,33 @@ lang: en
 
 # Introduction
 
-Docker Registry is a system that lets you store and distribute your Docker images. The mainly known Docker Registry is the official Docker Hub, where you can find official public images such as Alpine, Golang or Debian.
+Docker Registry is a system that lets you store and distribute your Docker images. The mainly known Docker Registry is the official [Docker Hub](https://hub.docker.com/), where you can find official public images such as [Alpine](https://hub.docker.com/_/alpine/), [Golang](https://hub.docker.com/_/golang/) or [Debian](https://hub.docker.com/_/debian/).
 
 Today, OVH allows you to use its own authenticated Docker Registry where you can **privately** store your Docker images. This is the best way to use your private images with our [Docker with Mesos/Marathon offer](https://www.runabove.com/docker-with-mesos-marathon.xml) without exposing them to everyone.
 
 # Quickstart
 
-```
-docker login registry.containers.ovh.net
+After having created your namespace, user account and defined the access permissions of your user on the namespace (as explained further in the article), you'll be able to push images in our private Docker Registry following the usual docker login/tag/push dance:
+
+```bash
+$ docker login registry.containers.ovh.net
 Username: myusername
 Password:
 
-docker pull nginx
-docker tag nginx registry.containers.ovh.net/mynamespace/nginx
-docker push registry.containers.ovh.net/mynamespace/nginx
+$ docker pull nginx
+$ docker tag nginx registry.containers.ovh.net/mynamespace/nginx
+$ docker push registry.containers.ovh.net/mynamespace/nginx
 ```
 
 ## Create a registry account
 
-First, you can create a new registry account on our [lab page](http://localhost). The beta is totally free. Once you done this, you can retrieve your registry accounts from the OVH Sunrise Manager.
+First, create a new registry account on our Runabove [lab](http://TODO) page. The beta is totally free. Once your account is created, you can manage it with the [OVH Sunrise Manager](https://www.ovh.com/manager/sunrise/registry/index.html#/registry).
 
 ![Accounts listing](/kb/images/2017-01-04-how-to-start-with-your-private-docker-registry/accounts_listing.png)
 
 ## Create an user
 
-A registry account can have multiple users. These users are used to manage rights on namespaces and images (will be explained further). From the users tab, you can create an user.
+A registry account can have multiple users. Different users can have different access rights on namespaces and images (as detailed further along). You can create a user in the manager "Users" tab.
 
 
 ![User creation](/kb/images/2017-01-04-how-to-start-with-your-private-docker-registry/user_creation.png)
@@ -43,28 +45,28 @@ Be careful, the description of the user **IS NOT** its username. The username an
 
 ## Create a namespace
 
-Before pushing an image, you need to create a new namespace from the manager. To understand what a namespace is, here's how is architectured a Docker Registry:
+Before pushing an image, you need to create a new namespace from the manager. To understand what a namespace is, let's detail the composition of a Docker image URI:
 
 ```
-registry_url/namespace/image:tag
+[registry_url]/namespace/image:tag
 ```
 
-* The regitry URL, if not specified, is the official Docker Hub. Otherwise, it helps Docker to find the registry you want to contact.
+* The registry URL, if not specified, is the official Docker Hub ([docker.io](docker.io)). Otherwise, it indicates to Docker where to find the registry you want to contact.
 * **The namespace is like a folder where you will put multiple images**
 * The image is the name of your image
-* The tag is like a version of your image (by default, latest) and allows you to easily deploy a precise version of an image
+* The tag is like a version of your image (by default, `latest`) and allows you to easily deploy a precise version of an image
 
-Namespaces can be created from the **Namespaces/Images** tab. You only have to provide a name which will be used further to push and pull images.
+Namespaces can be created from the **Namespaces/Images** tab. You only have to provide a name which will be further used to push and pull images.
 
 ![Namespace creation](/kb/images/2017-01-04-how-to-start-with-your-private-docker-registry/namespace_creation.png)
 
-## Add some permissions to your namespace
+## Configure your namespace permissions
 
-Once your namespace is created, you can select it from the dropdown list and see some details about it, like images it contains and manage permissions.
+Once your namespace is created, you can select it from the dropdown list and inspect the images it contains, and manage its access permissions.
 
 ![Namespace details](/kb/images/2017-01-04-how-to-start-with-your-private-docker-registry/namespace_details.png)
 
-Just add the previously created user as admin (for example) and this user will be able to pull/push on the entire namespace.
+Just add the previously created user as admin (for example) and this user will be able to pull/push images on the entire namespace.
 
 ![User permissions add](/kb/images/2017-01-04-how-to-start-with-your-private-docker-registry/user_permissions_add.png)
 
@@ -72,8 +74,8 @@ Just add the previously created user as admin (for example) and this user will b
 
 Now, you can login (authenticate) to our registry. It will generate a token used each time you will communicate with the registry and with our authentication system, so we will be able to retrieve the rights you have!
 
-```
-docker login registry.containers.ovh.net
+```bash
+$ docker login registry.containers.ovh.net
 Username: wsbq5k5ysqyt
 Password:
 Login Succeed
@@ -81,15 +83,15 @@ Login Succeed
 
 ## Push your first image
 
-Finally, you are able to push your first image into our registry! For this, you need to `tag` the image you want. Let's say that you want to push official nginx image in our registry:
+You can finally push your first image into our registry! For this, you need to `tag` the image you want. Let's say that you want to push the official nginx image in our registry:
 
-```
-docker pull nginx # Pull official nginx image from Docker Hub
-docker tag nginx registry.containers.ovh.net/devatoria/nginx # Rename image and add registry information
-docker push registry.containers.ovh.net/devatoria/nginx # Push it!
+```bash
+$ docker pull nginx # Pull official nginx image from Docker Hub
+$ docker tag nginx registry.containers.ovh.net/devatoria/nginx # Rename image and add registry information
+$ docker push registry.containers.ovh.net/devatoria/nginx # Push it!
 ```
 
-And, that's all!
+That's all!
 
 After a few minutes (waiting for synchronization), you will be able to see your namespace images, tags and details. You can also manage permissions directly on images.
 
@@ -97,4 +99,4 @@ After a few minutes (waiting for synchronization), you will be able to see your 
 
 # What's next?
 
-You can know check [how to use a private registry with our Docker on Mesos/Marathon offer](https://community.runabove.com/kb/en/docker/using-a-private-registry.html)!
+You can know check out [how to use a private registry with our Docker on Mesos/Marathon offer](https://community.runabove.com/kb/en/docker/using-a-private-registry.html), to link your registry account to your Docker Stack.
